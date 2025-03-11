@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block title %}Fill {{ questionnaire.title }}{% endblock %}
+{% block content %}
+
+<style>
+  #responseForm {
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+</style>
+
+<form id="responseForm">
+    <div class="main">
+        <h1>{{ questionnaire.title }}</h1>
+    </div>
+    <div style="background-color: hsl(0, 0%, 100%); padding: 2px; margin: 0px -10px; margin-bottom: 20px -10px; border-radius: 10px; margin-left:10px">
+        <p style="margin-left:10px;"><strong>Form Status:</strong> 
+            {% if questionnaire.is_public %}PUBLIC{% else %}PRIVATE{% endif %}
+        </p>
+        <p style="margin-left:10px;"><strong>User Status:</strong> 
+            {% if user.is_authenticated %}LOGGED IN ({{ user.username }}){% else %}NOT LOGGED IN{% endif %}
+        </p>
+    </div>
+
+    {% for question in questionnaire.questions.all %}
+    <div class="question" data-question-type="{{ question.question_type }}">
+        <h3>{{ question.text }}</h3>
+        {% if question.question_type == 'short_answer' %}
+            <input type="text" name="answer_{{ question.id }}" required>
+        {% elif question.question_type == 'paragraph' %}
+            <textarea name="answer_{{ question.id }}" required></textarea>
+        {% elif question.question_type == 'multiple_choice' %}
+            {% for option in question.options.all %}
+                <div class="option-container">
+                    <label>
+                        <input type="radio" name="answer_{{ question.id }}" value="{{ option.id }}" required>
+                        {{ option.text }}
+                    </label>
+                </div>
+            {% endfor %}
+        {% elif question.question_type == 'checkboxes' %}
+            {% for option in question.options.all %}
+                <div class="option-container">
+                    <label>
+                        <input type="checkbox" name="answer_{{ question.id }}" value="{{ option.id }}">
+                        {{ option.text }}
+                    </label>
+                </div>
+            {% endfor %}
+        {% elif question.question_type == 'dropdown' %}
+            <select name="answer_{{ question.id }}" required>
+                {% for option in question.options.all %}
+                    <option value="{{ option.id }}">{{ option.text }}</option>
+                {% endfor %}
+            </select>
+        {% elif question.question_type == 'linear_scale' %}
+            <div>
+                {% for i in "12345" %}
+                    <label>{{ i }}</label>
+                    <input type="radio" name="answer_{{ question.id }}" value="{{ i }}" required>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="submit-container">
+        <button type="submit" class="submit-btn">Submit Response</button>
+    </div>
+</form>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+document.getElementById('responseForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    // Select only question divs with a data-question-type attribute
+    const questionDivs = document.querySelectorAll('.question[data-question-type]');
+    const answers = [];
+    
+    questionDivs.forEach(q => {
+        const questionType = q.getAttribute('data-question-type');
+        const inputs = q.querySelectorAll('input, textarea, select');
+        if (inputs.length === 0) return;
+        
+        const questionId = inputs[0].name.split('_')[1];
+        let text = '';
+        const selectedOptions = [];
+        
+        if (questionType === 'short_answer' || questionType === 'paragraph') {
+            text = q.querySelector('input[type="text"], textarea').value;
+        } else if (questionType === 'linear_scale') {
+            const selectedRadio = q.querySelector('input[type="radio"]:checked');
+            text = selectedRadio ? selectedRadio.value : '';
+        } else if (questionType === 'multiple_choice') {
+            const selectedRadio = q.querySelector('input[type="radio"]:checked');
+            if (selectedRadio) selectedOptions.push(selectedRadio.value);
+        } else if (questionType === 'checkboxes') {
+            q.querySelectorAll('input[type="checkbox"]:checked').forEach(el => {
+                selectedOptions.push(el.value);
+            });
+        } else if (questionType === 'dropdown') {
+            const select = q.querySelector('select');
+            if (select.value) selectedOptions.push(select.value);
+        }
+
+        answers.push({ 
+            question: questionId, 
+            text: text, 
+            selected_options: selectedOptions 
+        });
+    });
+
+    const payload = { questionnaire: {{ questionnaire.id }}, answers };
+    console.log('Payload:', JSON.stringify(payload));
+
+    fetch('/submit/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => { throw new Error(JSON.stringify(data)); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert('Form successfully submitted!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the form. Please try again.');
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Assignment Task</title>
+    <style>
+      .scale-container {
+          text-align: center;
+
+          margin: 20px;
+      }
+      .scale-label {
+          display: inline-block;
+          width: 20px;
+      }
+      .scale-radio {
+          margin: 5px;
+      }
+  </style>
+  <style>
+  .table-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    
+  }
+  </style>
+    <style>
+      * {
+        font-family: poppins;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background-color: #ede6f6;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .main {
+        height: 200px;
+        width: 40vw;
+        box-sizing: border-box;
+        background-color: white;
+        border-top: 12px solid #663ab5;
+        border-radius: 10px;
+        margin: 13px;
+        margin-bottom: 0;
+        padding: 10px;
+        padding-left: 30px;
+        font-size: 13px;
+      }
+      .main h1 {
+        font-size: 25px;
+      }
+      .name {
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .mcq{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .checkbox{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .sh-ans{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .para{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .drdo{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .fileup{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .linear{
+        background-color: white;
+        box-sizing: border-box;
+        height: 150px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+      }
+      .mcg{
+        background-color: white;
+        box-sizing: border-box;
+        height: 290px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+}
+
+ 
+       .tcg{
+        background-color: white;
+        box-sizing: border-box;
+        height: 290px;
+        width: 40vw;
+        margin: 13px;
+        padding: 10px;
+        padding-left: 30px;
+        margin-bottom: 0;
+        border-radius: 10px;
+       }
+      input[type="text"],
+      [type="email"] {
+        border: none;
+        border-bottom: 1px solid black;
+        width: 90%;
+        padding: 5px;
+      }
+     
+       button {
+        margin: 13px;
+        margin-bottom: 0;
+        align-self: flex-start;
+        position: relative;
+        left: 92px;
+        padding: 8px 19px;
+        border-radius: 3px;
+        background-color: #663ab5;
+        border: none;
+        color: white;
+      } 
+      .submit {
+        width: 50vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+      }
+      button {
+        margin: 13px;
+        margin-left: 0;
+        margin-bottom: 0;
+        padding: 8px 19px;
+        border-radius: 3px;
+        background-color: #663ab5;
+        border: none;
+        color: white;
+      }
+      button:hover {
+        background-color: #452286;
+        transition: ease-in 200ms;
+      }
+      .rule {
+        width: 50vw;
+        margin-top: 15px;
+        font-size: 13px;
+        color: grey;
+      }
+      .policy {
+        font-size: 14px;
+        color: grey;
+      }
+      .policy a {
+        text-decoration: none;
+        color: grey;
+        text-decoration: underline;
+      }
+      img {
+        margin-top: 13px;
+        height: 200px;
+        width: 50vw;
+        object-fit: fill;
+        object-position: center;
+        border-radius: 10px;
+      }
+
+      .Google {
+        text-align: center;
+      }
+      @media only screen and (max-width: 1000px){
+        img, .main, .name, .email,.submit, .rule, .policy, .Google {
+          width: 90vw;
+        }
+        img {
+          height: 125px;
+        }
+        .main {
+          height: 180px;
+          font-size: 12px;
+        }
+        .name, .email {
+          height: 110px;
+          font-size: 12px;
+        }
+
+        .main h1 {
+          font-size: 18px;
+        }
+        .main p,h4 {
+          margin: 10px 0px;
+        }
+        h1 {
+          font-size: 25px;
+        }
+        input[type="text"],
+        [type="email"] {
+          padding: 5;
+        }
+
+        button {
+          padding: 10px 22px;
+          border-radius: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form action="">
+
+      <div class="main">
+        <h1>Assignment Task</h1>
+        <hr />
+        <p>
+          The name and photo associated with your Google account will be recorded when you upload files and submit this form. Your email is not part of your response.
+        </p>
+        <hr />
+        <h4 style="color: red;">* Indicates required question</h4>
+      </div>
+       <!-- Multiple Choice -->
+      <div class = "mcq">
+        <h3>MCQ <span style="color: red;">*</span></h3>
+        <label><input type="radio" name="mcq" value="Option 1" id="" required>Option 1</label>
+        <br>
+        <label><input type="radio" name="mcq" value="Option 2" id="" required>Option 2</label>
+        <br>
+        <label><input type="radio" name="mcq" value="Option 3" id="" required>Option 3</label>
+      </div>
+
+      <!-- Checkbox -->
+    <div class = "checkbox">
+      <h3>Checkbox <span style="color: red;">*</span></h3>
+      <label><input type="checkbox" name="checkbox[]" value="Option 1" id="" required>Option 1</label>
+      <br>
+      <label><input type="checkbox" name="checkbox[]" value="Option 2" id="" required>Option 2</label>
+      <br>
+      <label><input type="checkbox" name="checkbox[]" value="Option 3" id="" required>Option 3</label>
+    </div>
+
+    <!-- Short Answer -->
+    <div class = 'sh-ans'>
+      <h3>Short Answer <span style="color: red;">*</span></h3>
+      <input type="text" name="shortAnswer" placeholder= "Your Answer" id="" required>
+    </div>
+
+    <!-- Paragraph -->
+    <div class ="para">
+      <h3>Paragraph <span style="color: red;">*</span></h3>
+      <input type="text" name="shortAnswer" placeholder= "Your Answer" id="" required>
+    </div>
+
+    <!-- Drop Down -->
+    <div class = "drdo">
+      <h3>Dropdown <span style="color: red;">*</span></h3>
+      <select name="dropDown">
+        <option value="Option 1" id="" required>Option 1</option>
+        <option value="Option 2" id="" required>Option 2</option>
+        <option value="Option 3" id="" required>Option 3</option>
+      </select>
+    </div>
+
+       
+    <!-- File Upload -->
+    <div class = "fileup">
+      <h3>File Upload <span style="color: red;">*</span></h3>
+    <input type="file" name="fileUpload" id="" required>
+    </div>
+
+     <!-- Linear Scale -->
+    <div class = "linear">
+      <h3>linear Scale <span style="color: red;">*</span></h3>
+  <div class="scale-container">
+      <div class="scale-label">1</div>
+      <div class="scale-label">2</div>
+      <div class="scale-label">3</div>
+      <div class="scale-label">4</div>
+      <div class="scale-label">5</div>
+      <br>
+      <label>Worst</label>
+      <input class="scale-radio" type="radio" name="linearScale" value="1" id="" required>
+      <input class="scale-radio" type="radio" name="linearScale" value="2" id="" required>
+      <input class="scale-radio" type="radio" name="linearScale" value="3" id="" required>
+      <input class="scale-radio" type="radio" name="linearScale" value="4" id="" required>
+      <input class="scale-radio" type="radio" name="linearScale" value="5" id="" required>
+      <label>Best</label>
+    </div>
+  </div>
+
+  <!-- Multi Choice Grid -->
+  <div class = "mcg">
+    <h3>Multi Choice Grid <span style="color: red;">*</span></h3>
+    <div class="table-container">
+  <table>
+    <tr>
+      <th></th>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+    </tr>
+    <tr>
+      <td>Row 1</td>
+      <td><input type="radio" name="grid[Row 1]" value="Column 1"></td>
+      <td><input type="radio" name="grid[Row 1]" value="Column 2"></td>
+      <td><input type="radio" name="grid[Row 1]" value="Column 3"></td>
+    </tr>
+    <tr>
+      <td>Row 2</td>
+      <td><input type="radio" name="grid[Row 2]" value="Column 1"></td>
+      <td><input type="radio" name="grid[Row 2]" value="Column 2"></td>
+      <td><input type="radio" name="grid[Row 2]" value="Column 3"></td>
+    </tr>
+    <tr>
+      <td>Row 3</td>
+      <td><input type="radio" name="grid[Row 3]" value="Column 1"></td>
+      <td><input type="radio" name="grid[Row 3]" value="Column 2"></td>
+      <td><input type="radio" name="grid[Row 3]" value="Column 3"></td>
+    </tr>
+  </table>
+</div>
+  </div>
+
+  <!-- Tick Box Grid -->
+  <div class = "tcg">
+    <h3>Tick Box Grid <span style="color: red;">*</span></h3>
+    <div class="table-container">
+    <table>
+    <tr>
+      <th></th>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+    </tr>
+    <tr>
+      <td>Row 1</td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 1][Column 1]"  id="" required></td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 1][Column 2]"  id="" required></td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 1][Column 3]"  id="" required></td>
+    </tr>
+    <tr>
+      <td>Row 2</td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 2][Column 1]"  id="" required></td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 2][Column 2]"  id="" required></td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 2][Column 3]"  id="" required></td>
+    </tr>
+    <tr>
+      <td>Row 3</td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 3][Column 1]"  id="" required></td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 3][Column 2]"  id="" required></td>
+      <td><input type="checkbox" name="tickBoxGrid[Row 3][Column 3]"  id="" required></td>
+    </tr>
+  </table>
+  </div>
+</div>
+  
+     
+<div style="width: 40vw; display: flex; justify-content: space-between; align-items: center; margin: 20px auto; padding: 0 20px;">
+  <button type="submit">Submit</button>
+  
+  <div style="display: flex; align-items: center;">
+   
+    <input type="range" id="linearScale" name="linearScale" min="1" max="5" step="1" value="3" style="background: linear-gradient(to right, green, green 20%, transparent 20%, transparent 100%); width: 100%; margin: 0 10px;">
+    <span>Page 1 of 1</span>
+  </div>
+  <span style="cursor: pointer; color: purple; text-decoration: underline;" id="clearFormButton">Clear Form</span>
+</div>
+
+
+      <p class="rule">Never submit passwords through Google Forms</p>
+      <p class="policy">
+        This content is neither created nor endrosed by Google.
+        <a href="#">Report Abuse.</a> <a href="#">Terms of condition.</a>
+        <a href="#">Privacy Policy.</a>
+        <h1 class="Google" style="color: grey; font-weight: 550; width: 50vw;">Google Forms</h1>
+      </p>
+    </form>
+
+    
+
+  </body>
+</html>

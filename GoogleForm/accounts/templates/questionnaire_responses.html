@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Responses for "{{ questionnaire.title }}"</h1>
+    <p><strong>Created by:</strong> {{ questionnaire.user.user.username }}</p>
+    <p><strong>Visibility:</strong> {% if questionnaire.is_public %}Public{% else %}Private{% endif %}</p>
+
+    <!-- Responses Section -->
+    <div class="responses-container">
+        {% for response in responses %}
+        <div class="response-card">
+            <div class="response-header">
+                <p><strong>Responded by:</strong> {{ response.respondent }} 
+                    {% if not questionnaire.is_public and response.respondent != "Anonymous" %}
+                      
+                    {% endif %}
+                </p>
+                <p><strong>Submitted at:</strong> {{ response.submitted_at }}</p>
+            </div>
+            <div class="response-body">
+                {% for answer in response.answers %}
+                <div class="question-answer">
+                    <p class="question"><strong>Q:</strong> {{ answer.question.text }}</p>
+                    <p class="answer">
+                        <strong>A:</strong>
+                        {% if answer.question.question_type == 'multiple_choice' or answer.question.question_type == 'checkboxes' or answer.question.question_type == 'dropdown' %}
+                            {{ answer.selected_options.all|join:", " }}
+                        {% elif answer.question.question_type == 'linear_scale' %}
+                            {{ answer.text|default:"Not answered" }}
+                        {% else %}
+                            {{ answer.text|default:"Not answered" }}
+                        {% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+            <p>No responses yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Export Button -->
+    <div class="export-button-container">
+        <button class="export-button" onclick="exportToExcel()">Export to Excel</button>
+    </div>
+</div>
+
+<!-- JavaScript for Export to Excel -->
+<script>
+    function exportToExcel() {
+        let table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Respondent</th>
+                    <th>Submitted At</th>
+                    <th>Question</th>
+                    <th>Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                    {% for answer in response.answers %}
+                        <tr>
+                            <td>{{ response.respondent }}</td>
+                            <td>{{ response.submitted_at }}</td>
+                            <td>{{ answer.question.text }}</td>
+                            <td>
+                                {% if answer.question.question_type == 'multiple_choice' or answer.question.question_type == 'checkboxes' or answer.question.question_type == 'dropdown' %}
+                                    {{ answer.selected_options.all|join:", " }}
+                                {% elif answer.question.question_type == 'linear_scale' %}
+                                    {{ answer.text|default:"Not answered" }}
+                                {% else %}
+                                    {{ answer.text|default:"Not answered" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        `;
+        let blob = new Blob([table.outerHTML], { type: 'application/vnd.ms-excel' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = 'responses.xls';
+        a.click();
+    }
+</script>
+
+<!-- CSS unchanged -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    h1 {
+        color: #663ab5;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+    .responses-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .response-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+    .response-header {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    .response-header p {
+        margin: 5px 0;
+        font-size: 0.95rem;
+        color: #555;
+    }
+    .question-answer {
+        margin-bottom: 15px;
+    }
+    .question {
+        font-weight: bold;
+        color: #663ab5;
+        margin-bottom: 5px;
+    }
+    .answer {
+        color: #555;
+        margin-left: 20px;
+    }
+    .export-button-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+    .export-button {
+        background-color: #663ab5;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .export-button:hover {
+        background-color: #9575cd;
+    }
+</style>
+{% endblock %}

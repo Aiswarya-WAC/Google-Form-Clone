@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% block title %}Create Questionnaire{% endblock %}
+{% block content %}
+   <!-- Navbar (unchanged) -->
+   <nav class="navbar">
+    <div class="logo">GForm Builder</div>
+    {% if user.is_authenticated %}
+        <button class="logout-button" onclick="handleLogout()">Logout</button>
+    {% endif %}
+</nav>
+<br>
+<br>
+
+<form id="dynamicForm">
+    <div class="main">
+        <input type="text" id="formHeading" placeholder="Enter your Questionnaire Title" required>
+        <p>Create your custom questionnaire</p>
+    </div>
+
+    <!-- Form visibility settings -->
+    <div class="form-visibility">
+        <h3>Questionnaire Visibility</h3>
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="visibility" value="public" checked> Public (Anyone can fill the form without login)
+            </label>
+            <label>
+                <input type="radio" name="visibility" value="private"> Private (Only logged in users can fill the form)
+            </label>
+        </div>
+    </div>
+
+    <!-- Container only for questions -->
+    <div id="questionsContainer">
+        <div class="question placeholder">
+            <h3>Add Your First Question</h3>
+            <button type="button" class="add-question-btn" onclick="openQuestionTypePopup(event)">+</button>
+            <button type="button" class="delete-question-btn" onclick="deleteQuestion(event)">-</button>
+        </div>
+    </div>
+
+    <!-- Submit button placed outside the questions container -->
+    <div class="form-actions">
+        <button type="submit" class="submit-btn">Save Questionnaire</button>
+    </div>
+</form>
+
+<!-- Popup and Overlay -->
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="questionTypePopup">
+    <h2>Choose Question Type</h2>
+    <div class="popup-option" data-type="short_answer">Short Answer</div>
+    <div class="popup-option" data-type="paragraph">Paragraph</div>
+    <div class="popup-option" data-type="multiple_choice">Multiple Choice</div>
+    <div class="popup-option" data-type="checkboxes">Checkboxes</div>
+    <div class="popup-option" data-type="dropdown">Dropdown</div>
+    <div class="popup-option" data-type="linear_scale">Linear Scale</div>
+</div>
+
+<script>
+let questionCounter = 0;
+
+function openQuestionTypePopup(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById("questionTypePopup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closeQuestionTypePopup() {
+    document.getElementById("questionTypePopup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+}
+
+function deleteQuestion(event) {
+    const questionDiv = event.target.closest('.question');
+    // Only delete if there is more than one question left in the container
+    if (questionDiv && document.querySelectorAll('#questionsContainer .question').length > 1) {
+        questionDiv.remove();
+    }
+}
+
+function addQuestion(type) {
+    questionCounter++;
+    const container = document.getElementById('questionsContainer');
+    const newQuestionDiv = document.createElement('div');
+    newQuestionDiv.className = 'question';
+    newQuestionDiv.innerHTML = `
+        <input type="text" name="questionText${questionCounter}" placeholder="Enter your question" required>
+        <input type="hidden" name="questionType${questionCounter}" value="${type}">
+    `;
+
+    switch(type) {
+        case 'short_answer':
+            newQuestionDiv.innerHTML += `
+                <input type="text" placeholder="Short answer text field" class="inactive-input" readonly>
+            `;
+            break;
+        case 'paragraph':
+            newQuestionDiv.innerHTML += `
+                <textarea placeholder="Paragraph answer field" class="inactive-textarea" readonly></textarea>
+            `;
+            break;
+        case 'multiple_choice':
+            newQuestionDiv.innerHTML += `
+                <div class="option-container">
+                    <label>
+                        <input type="radio" name="mcq${questionCounter}" class="inactive-radio" disabled>
+                        <input type="text" name="option${questionCounter}" value="Option 1" class="option-label">
+                        <button type="button" class="delete-option-btn" onclick="this.closest('.option-container').remove()">×</button>
+                    </label>
+                </div>
+                <button type="button" onclick="addOption(event, 'mcq')">Add Option</button>
+            `;
+            break;
+        case 'checkboxes':
+            newQuestionDiv.innerHTML += `
+                <div class="option-container">
+                    <label>
+                        <input type="checkbox" class="inactive-checkbox" disabled>
+                        <input type="text" name="option${questionCounter}" value="Option 1" class="option-label">
+                        <button type="button" class="delete-option-btn" onclick="this.closest('.option-container').remove()">×</button>
+                    </label>
+                </div>
+                <button type="button" onclick="addOption(event, 'checkbox')">Add Option</button>
+            `;
+            break;
+        case 'dropdown':
+            newQuestionDiv.innerHTML += `
+                <div class="dropdown-container">
+                    <select class="preview-select">
+                        <option>Option 1</option>
+                    </select>
+                    <button type="button" class="delete-option-btn" onclick="removeDropdownOption(event)">×</button>
+                </div>
+                <div class="dropdown-message">You can view and select options (preview mode)</div>
+                <div>
+                    <input type="text" placeholder="Add new option" id="newDropdownOption${questionCounter}">
+                    <button type="button" onclick="addDropdownOption(event)">Add Option</button>
+                </div>
+            `;
+            break;
+        case 'linear_scale':
+            newQuestionDiv.innerHTML += `
+                <div>
+                    <label>1</label>
+                    <input type="radio" name="scale${questionCounter}" class="inactive-radio" disabled>
+                    <input type="radio" name="scale${questionCounter}" class="inactive-radio" disabled>
+                    <input type="radio" name="scale${questionCounter}" class="inactive-radio" disabled>
+                    <input type="radio" name="scale${questionCounter}" class="inactive-radio" disabled>
+                    <input type="radio" name="scale${questionCounter}" class="inactive-radio" disabled>
+                    <label>5</label>
+                </div>
+            `;
+            break;
+    }
+
+    newQuestionDiv.innerHTML += `
+        <button type="button" class="add-question-btn" onclick="openQuestionTypePopup(event)">+</button>
+        <button type="button" class="delete-question-btn" onclick="deleteQuestion(event)">-</button>
+    `;
+
+    // Remove placeholder if present (i.e. on adding the first real question)
+    const placeholder = document.querySelector('#questionsContainer .placeholder');
+    if (placeholder) {
+        placeholder.remove();
+    }
+    container.appendChild(newQuestionDiv);
+    closeQuestionTypePopup();
+}
+
+function addOption(event, type) {
+    const questionDiv = event.target.closest('.question');
+    const newOptionDiv = document.createElement('div');
+    newOptionDiv.className = 'option-container';
+
+    newOptionDiv.innerHTML = type === 'mcq' 
+        ? `
+            <label>
+                <input type="radio" name="mcq${questionCounter}" class="inactive-radio" disabled>
+                <input type="text" name="option${questionCounter}" placeholder="New Option" class="option-label">
+                <button type="button" class="delete-option-btn" onclick="this.closest('.option-container').remove()">×</button>
+            </label>
+        `
+        : `
+            <label>
+                <input type="checkbox" class="inactive-checkbox" disabled>
+                <input type="text" name="option${questionCounter}" placeholder="New Option" class="option-label">
+                <button type="button" class="delete-option-btn" onclick="this.closest('.option-container').remove()">×</button>
+            </label>
+        `;
+
+    questionDiv.insertBefore(newOptionDiv, event.target);
+}
+
+function addDropdownOption(event) {
+    const questionDiv = event.target.closest('.question');
+    const dropdownContainer = questionDiv.querySelector('.dropdown-container');
+    const selectElement = dropdownContainer.querySelector('select');
+    const inputElement = questionDiv.querySelector(`#newDropdownOption${questionCounter}`);
+    const newOptionValue = inputElement.value.trim();
+
+    if (newOptionValue) {
+        const newOption = document.createElement('option');
+        newOption.text = newOptionValue;
+        newOption.value = newOptionValue;
+        selectElement.add(newOption);
+        inputElement.value = '';
+    }
+}
+
+function removeDropdownOption(event) {
+    const dropdownContainer = event.target.closest('.dropdown-container');
+    const selectElement = dropdownContainer.querySelector('select');
+    if (selectElement.options.length > 1) {
+        const selectedIndex = selectElement.selectedIndex;
+        selectElement.remove(selectedIndex);
+    }
+}
+
+document.getElementById('questionTypePopup').addEventListener('click', function(event) {
+    const option = event.target.closest('.popup-option');
+    if (option) {
+        const type = option.getAttribute('data-type');
+        addQuestion(type);
+    }
+});
+
+document.getElementById('overlay').addEventListener('click', closeQuestionTypePopup);
+
+document.getElementById('dynamicForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const title = document.getElementById('formHeading').value;
+    // Get the visibility setting
+    const isPublic = document.querySelector('input[name="visibility"]:checked').value === 'public';
+    
+    // Only select question divs inside the questions container
+    const questionDivs = document.querySelectorAll('#questionsContainer .question');
+    const questions = [];
+
+    questionDivs.forEach(q => {
+        // Check if the question has an input for text (to avoid accidental placeholders)
+        const questionTextInput = q.querySelector('input[name^="questionText"]');
+        if (!questionTextInput) return;
+        const questionText = questionTextInput.value;
+        const questionType = q.querySelector('input[name^="questionType"]').value;
+        let options = [];
+
+        if (questionType === 'multiple_choice' || questionType === 'checkboxes') {
+            options = Array.from(q.querySelectorAll('.option-label')).map(opt => ({ text: opt.value }));
+        } else if (questionType === 'dropdown') {
+            options = Array.from(q.querySelectorAll('select option')).map(opt => ({ text: opt.text }));
+        }
+
+        questions.push({ text: questionText, question_type: questionType, options });
+    });
+
+    fetch('/save/', { // Update the URL to match your API endpoint
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}' // Add CSRF token for Django security
+        },
+        body: JSON.stringify({ 
+            title, 
+            questions,
+            is_public: isPublic // Include the visibility setting
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Construct the full URL for the newly created questionnaire
+        const questionnaireUrl = `${window.location.origin}/fill/${data.id}`;
+
+        // Display the link to the user
+        alert(`Questionnaire saved! Fill it at: ${questionnaireUrl}`);
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
+
+<style>
+
+body {
+  padding-top: 60px; /* Adjust this based on your navbar height */
+}
+.form-visibility {
+    margin: 0px -10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-left:20px;
+}
+
+.form-visibility h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #663ab5 0%, #9575cd 100%);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            margin-bottom:500px;
+        }
+
+
+
+        .navbar .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar .logout-button {
+            background-color: #fff;
+            color: #663ab5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .navbar .logout-button:hover {
+            background-color: #b8a2dd;
+            color: white;
+        }
+
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #663ab5;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+.radio-group input[type="radio"] {
+    margin-right: 10px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GForm</title>
+    <!-- Google Fonts for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede6f6 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #663ab5 0%, #9575cd 100%);
+            padding: 12px 24px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar .logout-button {
+            background-color: #fff;
+            color: #7e57c2;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .logout-button:hover {
+            background-color: #ede7f6;
+            transform: scale(1.05);
+        }
+
+        /* Main Content Container */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard Section */
+        .dashboard {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #7e57c2;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Card Container */
+        .card-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+            width: 45%;
+            background: linear-gradient(145deg, #7e57c2 0%, #9575cd 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            padding: 1rem;
+            color: white;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .card .icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .card .text {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* Left Card */
+        .card.left {
+            margin-right: auto;
+        }
+
+        /* Right Card */
+        .card.right {
+            margin-left: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 16px;
+            }
+
+            .navbar .logo {
+                font-size: 1.3rem;
+            }
+
+            .navbar .logout-button {
+                padding: 6px 14px;
+                font-size: 0.9rem;
+            }
+
+            .dashboard-header {
+                font-size: 1.5rem;
+            }
+
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                width: 100%;
+                height: 200px;
+            }
+
+            .card .icon {
+                font-size: 2.5rem;
+            }
+
+            .card .text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">GForm Builder</div>
+        <button class="logout-button" onclick="handleLogout()">Logout</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section class="dashboard">
+            <h1 class="dashboard-header">Welcome, <span id="username">{{ user.username }}</span>!</h1>
+
+            <!-- Card Container -->
+            <div class="card-container">
+                <!-- Create Form Card (Left) -->
+                <div class="card left" onclick="redirectToCreateForm()">
+                    <div class="icon">+</div>
+                    <div class="text">Create New Form</div>
+                </div>
+
+                <!-- View Forms Card (Right) -->
+                <div class="card right" onclick="redirectToViewForms()">
+                    <div class="icon">📋</div>
+                    <div class="text">View Forms</div>
+                </div>
+
+
+<script>
+    // Function to redirect to view responses page
+    function redirectToViewResponses() {
+        console.log("Redirecting to view responses page");
+        window.location.href = "/questionnaire/1/responses/"; // Example pk, adjust as needed
+    }
+</script>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Access token passed from the backend (if available)
+        const accessToken = "{{ access_token }}";
+        
+        function handleLogout() {
+    fetch('/logout/', {
+        method: 'GET',
+        credentials: 'same-origin' // Ensures session cookies are sent
+    }).then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    }).catch(error => console.error('Logout failed:', error));
+}
+
+        // Function to redirect to create questionnaire page
+        function redirectToCreateForm() {
+            console.log("Redirecting to create questionnaire page");
+            window.location.href = "/create";
+        }
+
+        // Function to redirect to view forms page
+        function redirectToViewForms() {
+            console.log("Redirecting to view forms page");
+            window.location.href = "/list";
+        }
+        function redirectToViewResponses() {
+        console.log("Redirecting to view responses page");
+        window.location.href = "/questionnaire/1/responses/"; // Example pk, adjust as needed
+    }
+        
+    </script>
+</body>
+</html>
