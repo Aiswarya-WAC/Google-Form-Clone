@@ -1,0 +1,23 @@
+# Exclude Python virtual environment
+/env/
+
+# If your virtual environment is named 'venv' or other common names, add them too
+/venv/
+/.venv/
+
+# Byte-compiled and cache files
+__pycache__/
+*.py[cod]
+
+# Environment-specific files
+.env
+*.env
+*.local
+
+# IDE and editor files
+*.vscode/
+*.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
