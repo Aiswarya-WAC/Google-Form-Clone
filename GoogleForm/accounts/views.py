@@ -199,4 +199,40 @@ class QuestionnaireResponsesView(DetailView):
         context['username'] = self.request.user.username
         return context
     
-    
+
+@method_decorator(login_required, name='dispatch')
+class EditQuestionnaireView(TemplateView):
+    template_name = 'edit_questionnaire.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        questionnaire_id = self.kwargs['pk']
+        questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, user__user=self.request.user)
+        context['questionnaire'] = questionnaire
+        context['questions'] = questionnaire.questions.all()
+        context['question_types'] = Question.QUESTION_TYPES  # Pass question types to the template
+        return context
+
+    def post(self, request, *args, **kwargs):
+        questionnaire_id = self.kwargs['pk']
+        questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, user__user=self.request.user)
+
+        # Update the questionnaire title and visibility
+        questionnaire.title = request.POST.get('title')
+        questionnaire.is_public = request.POST.get('visibility') == 'public'
+        questionnaire.save()
+
+        # Update or add questions
+        for question in questionnaire.questions.all():
+            question.text = request.POST.get(f'question_text_{question.id}')
+            question.question_type = request.POST.get(f'question_type_{question.id}')  # Ensure question_type is set
+            question.save()
+
+            # Update options for multiple choice, checkboxes, and dropdown questions
+            if question.question_type in ['multiple_choice', 'checkboxes', 'dropdown']:
+                options = request.POST.getlist(f'options_{question.id}')
+                question.options.all().delete()  # Remove existing options
+                for option_text in options:
+                    Option.objects.create(question=question, text=option_text)
+
+        return redirect('list_questionnaires')

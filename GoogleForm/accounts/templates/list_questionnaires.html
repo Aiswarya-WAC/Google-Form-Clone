@@ -3,7 +3,7 @@
 {% block content %}
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="logo">GForm Builder</div>
+        <div class="logo">SnapForms</div>
         {% if user.is_authenticated %}
             <button class="logout-button" onclick="handleLogout()">Logout</button>
         {% endif %}
@@ -35,6 +35,10 @@
                             <button class="copy" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'fill_questionnaire' questionnaire.id %}')">
                                 Copy Link
                             </button>
+                            <!-- Add Edit Button -->
+                            <a href="{% url 'edit_questionnaire' questionnaire.id %}" class="edit-button">
+                                Edit
+                            </a>
                             <button class="delete" onclick="deleteQuestionnaire({{ questionnaire.id }})">
                                 Delete
                             </button>
@@ -108,6 +112,22 @@
             background: linear-gradient(90deg, #f0f0f5 0%, #e6e6fa 100%);
             color: #333;
         }
+        .edit-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
 
         .navbar {
             position: fixed;
@@ -128,7 +148,22 @@
             font-weight: bold;
             color: white;
         }
+        .edit-button {
+    background-color: #e6e6fa; /* Lavender color */
+    color: #663ab5; /* Dark purple text for contrast */
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
 
+.edit-button:hover {
+    background-color:  #e5ddf3;; /* Lighter lavender for hover */
+}
         .navbar .logout-button {
             background-color: #fff;
             color: #663ab5;
@@ -295,7 +330,7 @@
             color: #663ab5;
             text-decoration: none;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 2 rem;
         }
 
         .create-link a:hover, .no-questionnaires a:hover, .login-prompt a:hover {

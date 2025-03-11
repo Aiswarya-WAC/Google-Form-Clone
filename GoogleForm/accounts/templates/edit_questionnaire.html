@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Edit Questionnaire{% endblock %}
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">SnapForms</div>
+        {% if user.is_authenticated %}
+            <button class="logout-button" onclick="handleLogout()">Logout</button>
+        {% endif %}
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Edit Questionnaire</h1>
+        <a href="{% url 'list_questionnaires' %}" class="back-button">Back to List</a>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="main">
+                <input type="text" id="formHeading" name="title" value="{{ questionnaire.title }}" required>
+                <p>Edit your questionnaire</p>
+            </div>
+
+            <!-- Form visibility settings -->
+            <div class="form-visibility">
+                <h3>Questionnaire Visibility</h3>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="visibility" value="public" {% if questionnaire.is_public %}checked{% endif %}> Public
+                    </label>
+                    <label>
+                        <input type="radio" name="visibility" value="private" {% if not questionnaire.is_public %}checked{% endif %}> Private
+                    </label>
+                </div>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="questionsContainer">
+                {% for question in questions %}
+                    <div class="question">
+                        <input type="text" name="question_text_{{ question.id }}" value="{{ question.text }}" required>
+                        <select name="question_type_{{ question.id }}" required>
+                            {% for type in question_types %}
+                                <option value="{{ type.0 }}" {% if type.0 == question.question_type %}selected{% endif %}>{{ type.1 }}</option>
+                            {% endfor %}
+                        </select>
+
+                        {% if question.question_type in 'multiple_choice,checkboxes,dropdown' %}
+                            <div class="options">
+                                {% for option in question.options.all %}
+                                    <input type="text" name="options_{{ question.id }}" value="{{ option.text }}" required>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+    <style>
+        body {
+            padding-top: 60px; /* Adjust this based on your navbar height */
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #663ab5 0%, #9575cd 100%);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar .logout-button {
+            background-color: #fff;
+            color: #663ab5;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .navbar .logout-button:hover {
+            background-color: #9575cd;
+            color: white;
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: #9575cd;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #663ab5;
+        }
+
+        .submit-btn {
+            background-color: #663ab5; /* Original color */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #9575cd; /* Original hover color */
+        }
+    </style>
+{% endblock %}
